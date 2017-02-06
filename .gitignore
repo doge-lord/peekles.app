@@ -1,0 +1,10 @@
+# Dependency directories
+node_modules
+npm-debug
+bower_components
+
+# Output files
+wwwroot
+
+# Workspace files
+.vscode
