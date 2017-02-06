@@ -1,5 +1,5 @@
 var gulp = require('gulp');
-var plugins = require('gulp-load-plugins')();
+var plugin = require('gulp-load-plugins')();
 
 var app = {
     name: 'peekles.app',
@@ -9,23 +9,33 @@ var app = {
 };
 
 gulp.task('default', ['debug']);
-gulp.task('debug', ['debug:js']);
-gulp.task('package', ['package:js']);
+gulp.task('debug', [
+
+    'debug:wiredep'
+]);
+gulp.task('package', [
+    'package:js'
+]);
 
 //==============================================================================
 // DEBUG
 //==============================================================================
 
-gulp.task('debug:js', ['clean:root'], function () {
+gulp.task('debug:js', ['clean'], function () {
     return gulp.src([
         app.source + '/**/*.js'
     ])
-        .pipe(plugins.eslint({
+        .pipe(plugin.eslint({
             fix: true
         }))
-        .pipe(plugins.eslint.format())
+        .pipe(plugin.eslint.format())
         .pipe(gulp.dest(app.source))
         .pipe(gulp.dest(app.root + '/js/'));
+});
+
+gulp.task('debug:wiredep', function () {
+    return gulp.src(app.source + '/index.html')
+        .pipe(gulp.dest('./wwwroot'));
 });
 
 //==============================================================================
@@ -36,17 +46,17 @@ gulp.task('debug:js', ['clean:root'], function () {
 // PACKAGE
 //==============================================================================
 
-gulp.task('package:js', ['clean:root'], function () {
+gulp.task('package:js', ['clean'], function () {
     return gulp.src([
         app.source + '/**/*.js'
     ])
-        .pipe(plugins.eslint({
+        .pipe(plugin.eslint({
             fix: true
         }))
-        .pipe(plugins.eslint.format())
-        .pipe(plugins.eslint.failAfterError())
-        .pipe(plugins.concat(app.name + '.js'))
-        .pipe(plugins.uglify())
+        .pipe(plugin.eslint.format())
+        .pipe(plugin.eslint.failAfterError())
+        .pipe(plugin.concat(app.name + '.js'))
+        .pipe(plugin.uglify())
         .pipe(gulp.dest(app.root + '/js/'));
 });
 
@@ -54,7 +64,7 @@ gulp.task('package:js', ['clean:root'], function () {
 // UTILITIES
 //==============================================================================
 
-gulp.task('clean:root', function () {
+gulp.task('clean', function () {
     return gulp.src(app.root, { read: false })
-        .pipe(plugins.clean());
+        .pipe(plugin.clean());
 });
